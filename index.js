@@ -1,5 +1,6 @@
-// Import
+// Imports
 const TelegramApi = require("node-telegram-bot-api")
+const {gameOptions, againOptions} = require("./options.js")
 
 // Token
 const token = "5564677142:AAF4fhx-wW2r-LvO3FPM3KVkbjXqjT8DuHE"
@@ -62,7 +63,6 @@ function start() {
     bot.on("callback_query", msg => {
         const data = msg.data
         const chatId = msg.message.chat.id
-        console.log(data);
         if (data === "/again") {
             return startGame(chatId)
         }
