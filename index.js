@@ -11,61 +11,12 @@ const bot = new TelegramApi(token, {
 
 const chats = {}
 
-// Play Again Options
-const againOptions = {
-    reply_markup: JSON.stringify({
-        inline_keyboard: [
-            [{
-                text: "Play again!",
-                callback_data: "/again"
-            }],
-        ]
-    })
-}
-
-// Game Options
-const gameOptions = {
-    reply_markup: JSON.stringify({
-        inline_keyboard: [
-            [{
-                text: "1",
-                callback_data: "1"
-            }, {
-                text: "2",
-                callback_data: "2"
-            }, {
-                text: "3",
-                callback_data: "3"
-            }],
-            [{
-                text: "1",
-                callback_data: "1"
-            }, {
-                text: "4",
-                callback_data: "4"
-            }, {
-                text: "5",
-                callback_data: "5"
-            }],
-            [{
-                text: "7",
-                callback_data: "7"
-            }, {
-                text: "8",
-                callback_data: "8"
-            }, {
-                text: "9",
-                callback_data: "9"
-            }]
-        ]
-    })
-}
-
 // Start the game 
 const startGame = async (chatId) => {
     await bot.sendMessage(chatId, "Try to guess what number from 0 to 9 I've chosen!", gameOptions);
     const randomNumber = Math.floor(Math.random() * 10);
     chats[chatId] = randomNumber;
+    console.log(chats[chatId]);
     await bot.sendMessage(chatId, "Waiting for your guess")
 }
 
@@ -111,12 +62,16 @@ function start() {
     bot.on("callback_query", msg => {
         const data = msg.data
         const chatId = msg.message.chat.id
-
-        if (data == "/again") {
+        console.log(data);
+        if (data === "/again") {
             return startGame(chatId)
         }
 
-        return bot.sendMessage(chatId, `User has clicked on the button ${data}`, againOptions)
+        if (data == chats[chatId]) {
+            bot.sendMessage(chatId, "Congratulations, you won the game!", againOptions)
+        } else {
+            bot.sendMessage(chatId, `Unfortunately, You haven't won. The bot has guessed number ${chats[chatId]}`, againOptions)
+        }
     })
 }
 
